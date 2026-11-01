@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#091524">
+  <meta name="description" content="Vier Missionen. Ein letzter Flug. Ein persönliches Advent-Escape-Game.">
+  <title>Operation Homebound · Niklas' Advent-Escape-Game</title>
+  <style>
+    :root{--bg:#091524;--navy:#0e2132;--surface:#10263a;--surface2:#152d40;--line:#294156;--line2:#3b5368;--cream:#f5efe3;--muted:#aec0cd;--mint:#8fdbcb;--amber:#f3c57d;--red:#fb9986;--shadow:0 15px 50px rgba(0,0,0,.22);font-synthesis:none}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:radial-gradient(ellipse 80% 38% at 50% -5%,#193c53 0,transparent 76%),var(--bg);color:var(--cream);font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.6;min-height:100dvh}
+    button,input{font:inherit}
+    button{cursor:pointer}
+    a{color:var(--mint)}
+    .mono,.eyebrow,.tag,.navmark,.stepcount,.smallcaps,.flightcode,.input-label{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.08em}
+    .app{max-width:1140px;padding:0 24px 70px;margin:0 auto}
+    .topbar{min-height:80px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid rgba(174,192,205,.18)}
+    .brand{display:flex;gap:12px;align-items:center;min-width:0}
+    .brand svg{flex:none}
+    .brand span{display:block;font-weight:800;letter-spacing:.17em;font-size:13px;white-space:nowrap}
+    .brand small{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+    .onair{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:11px;white-space:nowrap;text-transform:uppercase}
+    .dot{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 15px var(--mint)}
+    .hero{display:grid;grid-template-columns:1fr 350px;gap:24px;align-items:center;padding:56px 0 34px}
+    .eyebrow{font-size:11px;color:var(--amber);text-transform:uppercase;font-weight:700}
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(40px,6.8vw,76px);letter-spacing:-.058em;line-height:1.03;font-weight:800;margin:15px 0 22px}
+    h1 em{font-style:normal;color:var(--mint)}
+    .lead{max-width:550px;font-size:17px;color:#c3d0d8;line-height:1.75}
+    .hero-tags{display:flex;gap:10px;flex-wrap:wrap;margin-top:28px}
+    .tag{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);border-radius:100px;padding:7px 11px;font-size:10px;color:#c7d8df;text-transform:uppercase}
+    .radar{height:344px;width:344px;margin:auto;position:relative;overflow:hidden;border-radius:50%;border:1px solid #476376;background:radial-gradient(circle at center,#163b44 0,#102a39 32%,#091725 76%);box-shadow:0 0 0 12px rgba(143,219,203,.025),0 0 0 24px rgba(143,219,203,.02),var(--shadow)}
+    .radar:before,.radar:after{content:"";position:absolute;inset:15%;border:1px solid rgba(143,219,203,.18);border-radius:50%}
+    .radar:after{inset:30%}
+    .cross-x,.cross-y{position:absolute;background:rgba(143,219,203,.13)}
+    .cross-x{width:100%;height:1px;top:50%;left:0}.cross-y{width:1px;height:100%;left:50%;top:0}
+    .sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0deg,transparent 277deg,rgba(124,236,191,.0) 280deg,rgba(124,236,191,.23) 351deg,rgba(124,236,191,.47) 360deg);animation:scan 9s linear infinite}
+    @keyframes scan{to{transform:rotate(360deg)}}
+    .blip{position:absolute;width:7px;height:7px;background:var(--mint);border-radius:50%;box-shadow:0 0 0 4px rgba(143,219,203,.08),0 0 12px var(--mint)}
+    .blip.a{top:23%;left:66%}.blip.b{top:58%;left:30%;width:5px;height:5px}.blip.c{top:73%;left:60%;width:5px;height:5px}
+    .radar-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--mint);width:6px;height:6px;border-radius:50%}
+    .radar-label{position:absolute;top:19%;left:69%;font-size:10px;color:var(--mint);font-family:ui-monospace,monospace}
+    .radar-caption{position:absolute;bottom:17px;left:0;right:0;text-align:center;color:#a5becc;font-size:10px;letter-spacing:.18em}
+    .sectionbar{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:22px 0 19px}
+    .sectionbar h2{font-size:23px;letter-spacing:-.03em;margin:0}
+    .subtle{color:var(--muted);font-size:13px}
+    .sectionbar .subtle{margin-bottom:2px}
+    .missiongrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+    .mission-card{position:relative;border:1px solid var(--line);background:linear-gradient(140deg,rgba(33,65,83,.57),rgba(13,33,49,.85));border-radius:17px;padding:20px 17px;min-height:194px;text-align:left;color:inherit;transition:transform .15s,border-color .15s;overflow:hidden}
+    .mission-card:hover,.mission-card:focus-visible{transform:translateY(-2px);border-color:var(--mint);outline:none}
+    .mission-card.active{border-color:var(--mint);box-shadow:0 0 0 1px rgba(143,219,203,.25)}
+    .mission-card .number{font-size:12px;color:var(--amber);margin-bottom:18px;display:flex;justify-content:space-between}
+    .mission-card .number .status{font-size:9px;color:var(--muted)}
+    .mission-card.active .number .status,.mission-card.done .number .status{color:var(--mint)}
+    .mission-card h3{font-size:19px;letter-spacing:-.025em;line-height:1.23;margin:0 0 8px}
+    .mission-card p{font-size:12px;color:var(--muted);line-height:1.55;margin:0}
+    .deck{margin-top:24px;border:1px solid var(--line2);background:linear-gradient(155deg,#112c3e 0%,#0c2033 67%);border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+    .deck-top{background:rgba(5,19,31,.34);padding:19px 26px;display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line)}
+    .deck-top .mono{font-size:11px;color:var(--mint)}
+    .pill{display:inline-flex;align-items:center;border-radius:90px;padding:5px 11px;font-size:10px;letter-spacing:.07em;background:#1d3c4a;color:var(--mint);border:1px solid #38606d;text-transform:uppercase}
+    .deck-body{padding:32px}
+    .deck-head{display:flex;justify-content:space-between;gap:15px;align-items:start;margin-bottom:20px}
+    .deck-head h2{font-size:clamp(28px,5vw,42px);line-height:1.16;letter-spacing:-.04em;margin:8px 0 10px}
+    .deck-head p{color:#bfced7;max-width:700px;margin-bottom:0}
+    .stepcount{color:var(--muted);font-size:10px;white-space:nowrap}
+    .mission-brief{padding:19px 21px;border-left:3px solid var(--amber);background:#183448;border-radius:0 12px 12px 0;color:#e3ebef;font-size:14px;line-height:1.75;margin:21px 0 25px}
+    .mission-brief b{color:var(--amber)}
+    .puzzletitle{font-size:20px;letter-spacing:-.02em;margin:10px 0 5px}
+    .puzzlelead{color:#b6cbd7;font-size:14px;margin-bottom:17px}
+    .trackgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .choice{width:100%;border:1px solid #35566a;background:rgba(5,18,30,.42);border-radius:13px;color:var(--cream);text-align:left;padding:15px;transition:border-color .15s,background .15s}
+    .choice:hover,.choice:focus-visible{border-color:var(--mint);background:#204050;outline:none}
+    .choice.sel{border-color:var(--mint);background:#204953;box-shadow:inset 0 0 0 1px rgba(143,219,203,.25)}
+    .choice strong{display:block;font-size:16px;margin-bottom:7px;letter-spacing:.01em}
+    .choice .spec{color:var(--muted);font-size:12px;line-height:1.7}
+    .choice .spec b{color:#e3f1f3;font-weight:600}
+    .track-code{font-family:ui-monospace,monospace;font-size:10px;color:var(--amber);float:right}
+    .twocol{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .statrow{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 20px}
+    .stat{border:1px solid var(--line2);padding:9px 12px;border-radius:8px;font-size:12px;color:#dbe7ec;background:#102b3e}
+    .stat b{color:var(--mint);font-size:14px}
+    .spec-table{overflow-x:auto;border:1px solid var(--line);border-radius:12px;margin:18px 0 20px}
+    table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}
+    th,td{text-align:left;padding:11px 14px;border-bottom:1px solid rgba(84,117,136,.35)}
+    th{color:var(--mint);background:#132f43;font-size:10px;letter-spacing:.05em;text-transform:uppercase}
+    tr:last-child td{border-bottom:0}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:23px}
+    .btn{border:0;background:var(--mint);color:#0c2430;font-weight:800;letter-spacing:.01em;border-radius:10px;padding:12px 20px;min-height:46px;transition:transform .14s,filter .14s}
+    .btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+    .btn:focus-visible,.mutedbtn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+    .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;filter:none}
+    .mutedbtn{background:transparent;border:1px solid var(--line2);color:#d3e2e8}
+    .hints{border-top:1px solid var(--line);padding-top:16px;margin-top:23px;display:flex;align-items:center;gap:13px;flex-wrap:wrap}
+    .hintlink{border:0;color:var(--amber);font-size:13px;background:none;text-decoration:underline;text-underline-offset:4px;padding:4px 0}
+    .hint-message{width:100%;padding:12px 14px;border:1px solid #735b3c;color:#f7dfaf;background:#3a3030;border-radius:10px;font-size:13px}
+    .notice{border:1px solid #b97265;background:rgba(155,68,57,.13);padding:13px 15px;border-radius:9px;color:#ffd4ca;font-size:13px;margin-top:14px}
+    .success{border:1px solid #3a8a7d;background:rgba(71,158,141,.1);padding:16px 18px;border-radius:10px;color:#cbf3e9;margin:18px 0}
+    .success strong{color:var(--mint)}
+    .stamp{display:inline-flex;gap:7px;align-items:center;font-size:11px;letter-spacing:.12em;color:var(--mint);border:1px solid var(--mint);border-radius:6px;padding:6px 10px;transform:rotate(-2deg);margin-bottom:18px}
+    .code-strip{display:flex;align-items:center;justify-content:space-between;gap:18px;border:1px dashed #7da89e;background:rgba(25,72,70,.25);padding:16px 19px;border-radius:11px;margin:19px 0}
+    .code-strip .code{font-size:28px;font-weight:800;color:var(--mint);letter-spacing:.14em}
+    .code-strip .mono{font-size:10px;color:#a6c5c1}
+    .packetgrid{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+    .packet{border:1px solid var(--line2);background:#152d40;border-radius:12px;padding:15px 18px;color:var(--cream);min-width:79px;display:flex;flex-direction:column;align-items:center;gap:8px}
+    .packet:hover,.packet:focus-visible{border-color:var(--mint);outline:none}
+    .packet .smallcaps{color:var(--muted);font-size:10px}.packet strong{font-size:23px}
+    .sequence{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}
+    .seqcell{min-width:58px;min-height:62px;border:1px dashed #668299;display:flex;align-items:center;justify-content:center;border-radius:9px;font-size:24px;font-weight:750;background:#0c2335}
+    .seqcell.filled{border-style:solid;border-color:var(--mint);color:var(--mint)}
+    .cipher{font-family:ui-monospace,monospace;font-size:clamp(27px,7vw,47px);font-weight:800;letter-spacing:.18em;text-align:center;padding:24px 10px;border:1px solid #456178;border-radius:13px;margin:14px 0;background:#102a3b;color:var(--mint)}
+    input[type=range]{width:100%;accent-color:var(--mint);margin:10px 0}
+    .sliderow{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
+    .fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:17px}
+    .input-label{display:block;font-size:10px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+    .codeinput{width:100%;min-width:0;border:1px solid #546a7c;background:#0a2032;color:var(--cream);padding:13px;border-radius:8px;text-transform:uppercase;letter-spacing:.1em;outline:0}
+    .codeinput:focus{border-color:var(--mint);box-shadow:0 0 0 2px rgba(143,219,203,.15)}
+    .gatenote{font-size:13px;color:var(--muted);margin-top:14px}
+    .ticket{border-radius:16px;overflow:hidden;border:1px solid #5d6a68;margin:21px 0;box-shadow:0 12px 40px rgba(0,0,0,.2)}
+    .ticket-top{background:#f4eddf;color:#153244;padding:20px 23px;display:flex;justify-content:space-between;align-items:center}
+    .ticket-body{background:#eee5d5;color:#153244;padding:24px 23px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:15px;text-align:center}
+    .ticket-city{font-size:clamp(36px,8vw,60px);letter-spacing:-.03em;font-weight:850;line-height:1}
+    .ticket-citylabel{font-size:11px;color:#6a787d;text-transform:uppercase}
+    .ticket-arrow{font-size:30px;color:#507d82}
+    .ticket-foot{background:#f4eddf;color:#405a62;border-top:2px dashed #c4bbaa;padding:14px 23px;display:flex;justify-content:space-between;gap:10px;font-size:11px}
+    .personal{font-size:17px;line-height:1.8;color:#e6f2ed;margin:25px 0;white-space:pre-wrap}
+    .voucher{padding:19px;border:1px solid var(--amber);border-radius:14px;background:linear-gradient(135deg,rgba(237,188,105,.15),rgba(237,188,105,.025));margin:20px 0}
+    .voucher .eyebrow{margin-bottom:7px}.voucher h3{font-size:21px;margin:4px 0 9px}.voucher p{color:#e6d8c3;margin:0}
+    footer{text-align:center;border-top:1px solid rgba(174,192,205,.18);padding:25px 10px;margin-top:37px;font-size:11px;letter-spacing:.04em;color:#889ead}
+    .hidden{display:none!important}
+    @media(max-width:850px){.hero{grid-template-columns:1fr 240px;padding-top:36px}.radar{width:235px;height:235px}.missiongrid{grid-template-columns:repeat(2,1fr)}.mission-card{min-height:159px}.deck-body{padding:24px}}
+    @media(max-width:570px){.app{padding:0 15px 40px}.topbar{min-height:65px}.onair{font-size:9px}.brand span{font-size:11px}.hero{display:block;padding:34px 0 22px}.hero h1{font-size:50px}.hero .radar{width:190px;height:190px;margin:25px auto 4px}.lead{font-size:15px}.missiongrid{gap:9px}.mission-card{padding:14px 12px;min-height:165px}.mission-card h3{font-size:16px}.mission-card p{font-size:11px}.deck-body{padding:20px 16px}.deck-top{padding:14px 16px}.deck-head{display:block}.stepcount{display:block;margin:13px 0 0}.trackgrid,.twocol{grid-template-columns:1fr}.fields{gap:7px}.codeinput{font-size:13px;padding:10px 8px}.ticket-foot{flex-direction:column;gap:0}.sectionbar h2{font-size:20px}}
+    @media(prefers-reduced-motion:reduce){.sweep{animation:none}*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+
+/* WMBT-01: subtle companion identity, deliberately secondary to the aviation UI */
+.wombat-welcome{display:flex;align-items:center;gap:13px;padding:12px 14px;border:1px solid #35566a;background:linear-gradient(115deg,#19384a,#112b3d);border-radius:14px;margin-top:23px;max-width:510px}
+.wombat-avatar{display:flex;flex:none;align-items:center;justify-content:center;width:63px;height:63px;border-radius:14px;background:#254252;border:1px solid #4b6975;overflow:hidden}
+.wombat-icon{width:58px;height:58px;display:block;flex:none}
+.wombat-welcome .eyebrow{font-size:10px;margin:0 0 2px;color:#f3c57d}
+.wombat-welcome p{font-size:12px;color:#d2e1e6;margin:0;line-height:1.5}
+.wombat-ping{font-size:11px;background:none;border:0;color:var(--mint);padding:6px 0;text-decoration:underline;text-underline-offset:3px;font-weight:700}
+.wombat-ping:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.copilot-note{display:flex;align-items:center;gap:14px;border:1px solid #3d5865;border-left:3px solid #a6cdb3;border-radius:12px;background:#122c3a;padding:11px 15px;margin:2px 0 19px}
+.copilot-note .wombat-icon{width:42px;height:42px}
+.copilot-note .smallcaps{font-size:10px;color:var(--mint)}
+.copilot-note p{font-size:12px;color:#d5e3e8;margin:3px 0 0;line-height:1.55}
+.wombat-finale{display:flex;align-items:center;gap:14px;padding:16px 17px;border:1px solid #6f8d80;border-radius:13px;background:#1b3a3f;margin:13px 0 21px}
+.wombat-finale .wombat-icon{width:71px;height:71px}
+.wombat-finale b{font-size:11px;letter-spacing:.09em;color:var(--mint);display:block}
+.wombat-finale p{margin:4px 0 0;font-size:13px;color:#e7f0e6}
+.wombat-radar{position:absolute;top:31%;left:60%;font-size:9px;letter-spacing:.07em;color:#d6bb8d;text-shadow:0 1px 6px #091524}
+@media(max-width:570px){.wombat-welcome{gap:10px;margin-top:19px}.wombat-avatar{width:58px;height:58px}.copilot-note{gap:10px;padding:10px}.copilot-note .wombat-icon{width:38px;height:38px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <svg width="29" height="29" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M3 17L27 5L19 28L15 19L3 17Z" fill="#8fdbcb"/><path d="M15 19L27 5L11 15" stroke="#091524" stroke-width="1.5"/></svg>
+      <div><span>HOMEBOUND</span><small>private flight operations</small></div>
+    </div>
+    <div class="onair"><span class="dot"></span>Holiday operations · 2026</div>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <div class="eyebrow">CLASSIFIED // NIKLAS ONLY</div>
+        <h1 id="hero-title">Operation<br><em>Homebound.</em></h1>
+        <p class="lead">Vier verschlüsselte Missionen zwischen Hamburg und Mobile. Ein verlorenes Signal. Ein ungewöhnlicher Co-Pilot mit kurzen Beinen. Und am Ende wartet etwas nur für dich.</p>
+        <div class="hero-tags"><span class="tag">✈ Aviation mystery</span><span class="tag">⌁ 4 Missionen</span><span class="tag">◈ 4 secret drops</span><span class="tag">🐾 WMBT-01</span></div>
+        <div class="wombat-welcome" aria-label="Wombat Co-Pilot WMBT-01">
+          <div class="wombat-avatar" id="copilot-hero-portrait" aria-hidden="true"></div>
+          <div><div class="eyebrow">WMBT-01 // CO-PILOT ONLINE</div>
+          <p id="wombat-chirp" aria-live="polite">Flight Operations bestätigt: Ein Wombat befindet sich an Bord. Snacks sind unter Verschluss.</p>
+          <button class="wombat-ping" type="button" id="wombat-ping">Wombat anfunken ↗</button></div>
+        </div>
+      </div>
+      <div class="radar" aria-label="Animierte stilisierte Radaranzeige">
+        <div class="sweep"></div><div class="cross-x"></div><div class="cross-y"></div><div class="radar-center"></div>
+        <div class="blip a"></div><div class="blip b"></div><div class="blip c"></div><div class="radar-label">TRACK ?</div><div class="wombat-radar">WMBT-01 ✓</div><div class="radar-caption">SEARCHING FOR SIGNAL…</div>
+      </div>
+    </section>
+    <div class="sectionbar"><h2>Mission Control</h2><p class="subtle" id="overall-progress">00 / 04 abgeschlossen</p></div>
+    <nav class="missiongrid" id="mission-nav" aria-label="Missionen auswählen"></nav>
+    <section class="deck" id="mission-deck" aria-live="polite">
+      <div class="deck-top"><span class="mono" id="deck-ref">ENCRYPTED CHANNEL // 01</span><span class="pill" id="deck-status">BEREIT</span></div>
+      <div class="deck-body" id="deck-content"></div>
+    </section>
+  </main>
+  <footer>MADE WITH ❤️ IN HAMBURG · DELIVERED TO MOBILE, ALABAMA · EIN REIN FIKTIVES FLUGRÄTSEL</footer>
+</div>
+<script>
+/* ====================================================================
+   HIER PERSONALISIEREN: Passe diesen Block an, bevor du die Seite teilst.
+   Tip: Ändere die Texte zwischen den Anführungszeichen.
+   ==================================================================== */
+const PERSONAL = {
+  recipient: 'Niklas',
+  sender: 'Lea',
+  finalMessage: 'Lieber Niklas,\n\nvier Missionen, drei Codes und ein letzter Flug — du hast es geschafft! Auch wenn in diesem Advent ziemlich viele Kilometer zwischen uns liegen, bist du in Gedanken jeden Tag bei mir. Ich freu mich riesig auf dich, auf unsere nächsten Reisen und darauf, einfach wieder gemeinsam auf dem Sofa zu sitzen.\n\nHab dich lieb! ❤️\nDeine Lea',
+  giftTitle: 'Gutschein für einen gemeinsamen Sauna-Tag',
+  giftDescription: 'Wenn du wieder da bist, suchen wir uns ein schönes Spa aus und machen uns einen richtig entspannten Tag. Du wählst den Termin, ich kümmere mich um den Rest.'
+};
+/* ==================================================================== */
+
+// Für einen Adventskalender sind die Kapitel erst am passenden Tag spielbar.
+// Für einen eigenen Test: in der URL ?preview=1 ergänzen oder Testversion.html nutzen.
+const CALENDAR_LOCK = true;
+const PREVIEW_MODE = new URLSearchParams(location.search).get('preview') === '1';
+const MISSIONS=[
+  {n:1,day:1,date:'STANDBY',name:'Ghost on Radar',sub:'Das verschwundene Signal',steps:2,key:'NOVA',extra:'27'},
+  {n:2,day:4,date:'AWAITING CLEARANCE',name:'The Diversion',sub:'Die Entscheidung',steps:2,key:'PINE',extra:'18'},
+  {n:3,day:8,date:'RESTRICTED',name:'Encrypted Cargo',sub:'Die versteckte Nachricht',steps:2,key:'HOME',extra:'3'},
+  {n:4,day:12,date:'FINAL CLEARANCE',name:'Final Approach',sub:'Das letzte Ziel',steps:2,key:null,extra:null}
+];
+const TRACKS=[
+  {call:'SKY214',plane:'A321',eng:2,level:330,heading:87,squawk:'4321'},
+  {call:'NOVA72',plane:'B789',eng:2,level:370,heading:271,squawk:'6304'},
+  {call:'CARGO8',plane:'B744',eng:4,level:350,heading:268,squawk:'6403'},
+  {call:'LUMA19',plane:'A359',eng:2,level:390,heading:278,squawk:'5126'},
+  {call:'PINE31',plane:'B789',eng:2,level:310,heading:14,squawk:'1110'}
+];
+const PORTS=[
+  {name:'Bayport',code:'BPT',runway:3050,vis:1.2,burn:1800},
+  {name:'Pinefield',code:'PFD',runway:2650,vis:3.8,burn:2550},
+  {name:'Emerald',code:'EMD',runway:2150,vis:5.0,burn:1450},
+  {name:'Acorn',code:'ACR',runway:2900,vis:2.8,burn:3250}
+];
+const PACKETS=[{seq:4,val:'F'},{seq:2,val:'H'},{seq:5,val:'T'},{seq:1,val:'S'},{seq:3,val:'I'}];
+
+const WOMBAT_ICON = `<svg class="wombat-icon" viewBox="0 0 120 112" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Illustration eines Wombats mit Pilotenmütze">
+<path d="M22 45 Q7 32 15 17 Q21 10 31 19 L39 31" fill="#7b6258" stroke="#4f403c" stroke-width="3"/>
+<path d="M25 33 Q15 22 21 22 Q27 23 33 33" fill="#d69e98"/>
+<path d="M81 31 L91 17 Q101 8 108 20 Q111 32 97 45" fill="#7b6258" stroke="#4f403c" stroke-width="3"/>
+<path d="M87 33 Q94 20 101 23 Q104 29 96 38" fill="#d69e98"/>
+<path d="M20 58 Q20 23 60 24 Q100 23 101 58 L97 77 Q96 102 60 104 Q24 102 23 77Z" fill="#96796c" stroke="#514440" stroke-width="3"/>
+<path d="M29 68 Q41 57 60 65 Q79 57 91 68 Q96 90 74 96 Q59 104 46 96 Q24 91 29 68Z" fill="#c4a89b"/>
+<path d="M31 46 Q43 41 51 46" stroke="#5b4943" stroke-width="3" stroke-linecap="round" fill="none"/>
+<path d="M69 46 Q78 41 89 46" stroke="#5b4943" stroke-width="3" stroke-linecap="round" fill="none"/>
+<ellipse cx="43" cy="56" rx="4.5" ry="5.5" fill="#252a30"/><ellipse cx="78" cy="56" rx="4.5" ry="5.5" fill="#252a30"/>
+<circle cx="44" cy="54" r="1.4" fill="#f0e9df"/><circle cx="79" cy="54" r="1.4" fill="#f0e9df"/>
+<path d="M45 69 Q60 64 75 69 Q78 77 68 83 L52 83 Q42 77 45 69" fill="#343840"/>
+<path d="M60 82 Q58 89 53 89 M60 82 Q62 89 67 89" fill="none" stroke="#6d5851" stroke-width="2" stroke-linecap="round"/>
+<path d="M24 36 Q31 13 60 12 Q89 13 96 36 L91 40 Q58 35 29 40 Z" fill="#254d5e" stroke="#203d4a" stroke-width="2"/>
+<path d="M25 36 Q61 28 95 36 L95 42 Q60 37 25 42Z" fill="#193949"/>
+<circle cx="60" cy="24" r="8" fill="#ddb77e"/><path d="M56 27 L60 20 L64 27 M60 20 V30" stroke="#193949" stroke-width="1.7" fill="none"/>
+</svg>`;
+const COPILOT_LINES = {
+  1:['Fünf Radartracks, ein gesuchter Flieger. Ich übernehme die Bodenhaftung — du die Berechnungen.','Ich empfehle Gegenwind. Bei Rückenwind weht mir die Pilotenmütze weg.'],
+  2:['Safety first. Meine persönliche Mindestpistenlänge beträgt übrigens ungefähr zwei Wombatlängen.','Der Wind verhandelt nicht. Habe ich versucht. Erfolglos.'],
+  3:['Die Pakete sind durcheinander. Nein, ich habe sie nicht angeknabbert. Diesmal nicht.','Ich habe die Nachricht verschlüsselt abgelegt. Mein Passwort war leider „Karotte123“.'],
+  4:['Drei Schlüssel, ein Ziel. Und laut Besatzungsliste ist immer noch Platz für einen Wombat.','Das hier ist die letzte Prüfung. Mein offizieller Beitrag: moralischer Beistand und ausgezeichnete Bodenkenntnis.']
+};
+const COPILOT_PINGS = [
+ 'WMBT-01 an Niklas: Alle Systeme nominal. Ausnahme: Snackvorrat.',
+ 'Kontrollturm fragt nach meiner Fluglizenz. Ich habe meinen Wombat-Führerschein vorgezeigt.',
+ 'Ich bin ein ausgezeichneter Co-Pilot. Vor allem beim Navigieren zum Kühlschrank.',
+ 'Ground Control to Wombat: Bitte die Pfoten von den Schaltern.',
+ 'Aktueller Flugstatus: flauschig, fokussiert, leicht unterkoffeiniert.',
+ 'Vertrauliche Crew-Notiz: Diese Mission wurde mit viel Liebe aus Hamburg gesendet.'
+];
+let copilotPingIndex=0;
+function copilotNote(n,step=0){
+  return `<aside class="copilot-note" aria-label="Funkspruch vom Wombat-Co-Piloten">${WOMBAT_ICON}<div><span class="smallcaps">WMBT-01 // CO-PILOT COMMS</span><p>${e(COPILOT_LINES[n]?.[Math.min(step,1)]||'Alle Systeme bereit.')}</p></div></aside>`;
+}
+const KEY='homebound_advent_v1';
+function saved(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch{return {}}}
+const S={
+  done:Array.isArray(saved().done)?saved().done.filter(x=>Number.isInteger(x)&&x>=1&&x<=3):[],
+  page:1,step:0,choice:null,hint:0,feedback:'',packets:[],shift:0,codeEntry:'',vaultCodes:['','',''],vaultPin:'',completedFinal:!!saved().completedFinal
+};
+function store(){try{localStorage.setItem(KEY,JSON.stringify({done:S.done,completedFinal:S.completedFinal}))}catch{}}
+function calendarAvailable(n){return !CALENDAR_LOCK||PREVIEW_MODE||new Date()>=new Date(2026,11,MISSIONS[n-1].day)}
+function e(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function nav(){document.querySelector('#overall-progress').textContent=`${String(S.done.length+(S.completedFinal?1:0)).padStart(2,'0')} / 04 abgeschlossen`;
+  document.querySelector('#mission-nav').innerHTML=MISSIONS.map(m=>{
+    const completed=S.done.includes(m.n)||(m.n===4&&S.completedFinal);
+    const active=S.page===m.n;
+    return `<button class="mission-card ${active?'active':''} ${completed?'done':''}" type="button" data-mission="${m.n}" aria-current="${active?'step':'false'}"><div class="number mono"><span>MISSION 0${m.n} / ${m.date}</span><span class="status">${completed?'✓ DONE':!calendarAvailable(m.n)?'⏳ WAIT':active?'● ACTIVE':(m.n>1&&!S.done.includes(m.n-1)?'LOCKED':'OPEN')}</span></div><h3>${m.name}</h3><p>${m.sub}</p></button>`;
+  }).join('')}
+function title(m,detail){return `<div class="deck-head"><div><div class="eyebrow">Mission 0${m.n} // Secure Channel</div><h2>${m.name}</h2><p>${detail}</p></div><span class="stepcount">STEP ${String(Math.min(S.step+1,2)).padStart(2,'0')} / 02</span></div>${copilotNote(m.n,S.step)}`}
+function feedback(){return S.feedback?`<div class="notice" role="alert">${e(S.feedback)}</div>`:''}
+function hintbox(texts){return `<div class="hints"><button class="hintlink" type="button" data-action="hint">${S.hint>=texts.length?'Hinweise erneut ansehen':S.hint?'Noch ein Hinweis':'Wombat-Hinweis anfordern'} ↗</button><span class="subtle">${S.hint} / ${texts.length} Hinweise</span>${S.hint?`<div class="hint-message">${e(texts[S.hint-1])}</div>`:''}</div>`}
+function choices(items,format){return `<div class="trackgrid">${items.map((item,i)=>`<button class="choice ${S.choice===String(i)?'sel':''}" type="button" data-choice="${i}">${format(item)}</button>`).join('')}</div>`}
+function button(label='Prüfen',disabled=false){return `<div class="actions"><button class="btn" type="button" data-action="check" ${disabled?'disabled':''}>${label} →</button></div>`}
+function render(){const m=MISSIONS[S.page-1];nav();document.querySelector('#deck-ref').textContent=`SECURE CHANNEL // MISSION 0${m.n}`;
+  document.querySelector('#deck-status').textContent=S.completedFinal&&m.n===4?'MISSION COMPLETE':(S.done.includes(m.n)?'CLEARED':'ACTIVE');
+  let content='';
+  if(!calendarAvailable(m.n)){content=scheduled(m)}
+  else if(m.n<=3&&S.done.includes(m.n)){content=complete(m)}
+  else if(m.n===4&&S.completedFinal){content=finalReward()}
+  else if(!canEnter(m.n)){content=locked(m)}
+  else if(m.n===1){content=missionOne(m)}
+  else if(m.n===2){content=missionTwo(m)}
+  else if(m.n===3){content=missionThree(m)}
+  else{content=missionFour(m)}
+  document.querySelector('#deck-content').innerHTML=content;
+}
+function canEnter(n){return n===1||S.done.includes(n-1)||S.codeEntry===MISSIONS[n-2].key}
+function scheduled(m){return title(m,'Dieser Kanal ist aktuell noch verschlüsselt.')+`<div class="mission-brief"><b>TRANSMISSION PENDING</b><br>Mission 0${m.n} ist bereits vorbereitet, bleibt aber vorerst unter Verschluss. Der NFC-Tag ist richtig verknüpft — der Inhalt öffnet sich automatisch, sobald die Freigabe erteilt ist.</div><p class="subtle">Versuch es später noch einmal. Bis dahin: stay tuned.</p>`}
+function locked(m){const need=MISSIONS[m.n-2];return title(m,'Dieser Kanal ist verschlüsselt. Zuerst brauchst du die Freigabe der vorherigen Mission.')+`<div class="mission-brief"><b>ACCESS REQUIRED:</b> Gib den vierstelligen Freigabecode aus Mission 0${need.n} ein. Du kannst ihn auch eingeben, wenn du heute ein anderes Gerät verwendest.</div><label class="input-label" for="gatecode">FREIGABECODE</label><input class="codeinput" id="gatecode" maxlength="4" autocomplete="off" spellcheck="false" placeholder="••••" aria-label="Freigabecode">`+feedback()+`<div class="actions"><button class="btn" type="button" data-action="unlock">Kanal freischalten →</button></div><p class="gatenote">Noch keinen Code? Löse zuerst Mission 0${need.n}.</p>`}
+function missionOne(m){if(S.step===0){return title(m,'Ein einzelnes Radarsignal passt zu einer verschlüsselten Meldung. Nur ein Flugzeug erfüllt alle Bedingungen.')+`<div class="mission-brief"><b>OPERATIONS LOG // SECURE CHANNEL</b><br>Ein unbekannter Absender funkt: „Gesucht: <b>zweistrahliges Flugzeug</b> auf <b>FL350 oder höher</b>, Flugrichtung <b>250–290°</b>. Die <b>Quersumme des vierstelligen Squawk-Codes ist 13</b>.“<br>Welche Maschine ist gemeint? Alle Angaben sind fiktiv.</div><h3 class="puzzletitle">01 / Signal identifizieren</h3><p class="puzzlelead">Prüfe die Radardaten sorgfältig. FL370 bedeutet Flugfläche 370.</p>`+choices(TRACKS,t=>`<div class="track-code">SQ ${t.squawk}</div><strong>${t.call}</strong><div class="spec">TYPE <b>${t.plane}</b> · ENGINES <b>${t.eng}</b><br>FL <b>${t.level}</b> · HDG <b>${String(t.heading).padStart(3,'0')}°</b></div>`)+feedback()+button('Signal überprüfen',S.choice===null)+hintbox(['Filter zuerst nach Flugfläche und Flugrichtung. Ein Kurs von 270° ist ungefähr westwärts.','Zwei Flugzeuge erfüllen bereits Triebwerksanzahl, Höhe und Kurs. Vergleiche jetzt die Quersummen ihrer vierstelligen Codes.'])}
+  return title(m,'Du hast NOVA72 entdeckt. Jetzt muss die Crew einen Kurs für den Landeanflug bestimmen.')+`<div class="mission-brief"><b>ATIS / FICTIONAL APPROACH:</b><br>Wind: <b>270° mit 18 kt</b>. Verfügbar sind die Pisten <b>09, 18 und 27</b>. Wähle bei sonst gleichen Bedingungen die Piste mit dem günstigsten Gegenwind.</div><h3 class="puzzletitle">02 / Piste auswählen</h3><p class="puzzlelead">Pistennummern entsprechen ungefähr ihrer Richtung in Zehnergraden (Piste 27 ≈ 270°).</p>`+choices(['09','18','27'],x=>`<strong>RUNWAY ${x}</strong><div class="spec">Pistenrichtung ca. ${Number(x)*10}°</div>`)+feedback()+button('Runway bestätigen',S.choice===null)+hintbox(['Flugzeuge landen normalerweise bevorzugt gegen den Wind.','Wind aus 270° kommt aus Westen. Eine Piste mit Richtung 270° passt dazu.'])}
+function missionTwo(m){if(S.step===0){return title(m,'Ein wichtiger Flug muss ausweichen. Treibstoff, Sicht und Pistenlänge setzen klare Grenzen.')+`<div class="mission-brief"><b>DISPATCH NOTE // FICTIONAL SCENARIO</b><br>An Bord verbleiben <b>4.400 kg Treibstoff</b>. Nach der Landung müssen mindestens <b>1.400 kg Reserve</b> übrig sein. Erforderliche Pistenlänge: mindestens <b>2.400 m</b>. Mindestsicht: <b>2,0 km</b>.<br>Welcher Flughafen erfüllt <b>alle vier</b> Bedingungen?</div><h3 class="puzzletitle">01 / Alternate Airport</h3><p class="puzzlelead">Daten sind für dieses Spiel vereinfacht und erfunden; keine reale Flugplanungsgrundlage.</p><div class="spec-table"><table><thead><tr><th>Airport</th><th>Runway</th><th>Visibility</th><th>Fuel burn</th></tr></thead><tbody>${PORTS.map(p=>`<tr><td>${p.name} (${p.code})</td><td>${p.runway.toLocaleString('de-DE')} m</td><td>${p.vis.toLocaleString('de-DE')} km</td><td>${p.burn.toLocaleString('de-DE')} kg</td></tr>`).join('')}</tbody></table></div>`+choices(PORTS,p=>`<strong>${p.name}</strong><div class="spec">${p.code} · vorhergesagter Treibstoff nach Landung: <b>${(4400-p.burn).toLocaleString('de-DE')} kg</b></div>`)+feedback()+button('Ausweichflughafen bestätigen',S.choice===null)+hintbox(['Prüfe zunächst Sicht und Pistenlänge. Dadurch scheiden zwei Airports aus.','Danach prüfst du die Treibstoffreserve. Nur Pinefield erfüllt alle Mindestwerte.'])}
+  return title(m,'Pinefield ist ausgewählt. Mit der richtigen Piste kann die Crew Gegenwind nutzen.')+`<div class="mission-brief"><b>WINDS ALOFT / FINAL APPROACH</b><br>Aktueller Wind: <b>210° mit 16 kt</b>. Drei Pisten stehen zur Wahl: <b>03, 18 und 36</b>. Welcher Kurs ist am nächsten an der Richtung, aus der der Wind kommt?</div><h3 class="puzzletitle">02 / Windrichtung lesen</h3><p class="puzzlelead">Je kleiner die Differenz zwischen Pisten- und Windrichtung, desto direkter ist der Gegenwind.</p>`+choices(['03','18','36'],x=>`<strong>RUNWAY ${x}</strong><div class="spec">Richtung ca. ${Number(x)*10}°</div>`)+feedback()+button('Runway bestätigen',S.choice===null)+hintbox(['210° liegt zwischen Süden (180°) und Südwesten (225°).','Vergleiche 210° mit 030°, 180° und 360°. Die kleinste Winkeldifferenz sind 30°.'])}
+function packetArea(){return `<div class="packetgrid">${PACKETS.filter(x=>!S.packets.some(p=>p.seq===x.seq)).map(p=>`<button class="packet" type="button" data-packet="${p.seq}"><span class="smallcaps">SEQ ${String(p.seq).padStart(2,'0')}</span><strong>${p.val}</strong></button>`).join('')||'<span class="subtle">Alle Pakete zugeordnet.</span>'}</div><div class="sequence">${[0,1,2,3,4].map(i=>`<div class="seqcell ${S.packets[i]?'filled':''}">${S.packets[i]?S.packets[i].val:'·'}</div>`).join('')}</div><button class="hintlink" type="button" data-action="removePacket">Letztes Paket entfernen ↶</button>`}
+function caesar(str,shift){return str.replace(/[A-Z]/g,c=>String.fromCharCode((c.charCodeAt(0)-65-shift+26)%26+65))}
+function missionThree(m){if(S.step===0){return title(m,'Eine codierte Nachricht wurde in fünf Datenpakete zerlegt. Setze die Übertragung wieder zusammen.')+`<div class="mission-brief"><b>RECOVERED PACKETS // SECURE CHANNEL</b><br>Die Übertragung ist durcheinandergeraten. Jedes Paket besitzt eine <b>SEQ-Nummer</b> und ein Zeichen. Tippe sie in der <b>richtigen Reihenfolge</b> an.</div><h3 class="puzzletitle">01 / Pakete rekonstruieren</h3><p class="puzzlelead">Verbinde die fünf Buchstaben in aufsteigender SEQ-Reihenfolge.</p>`+packetArea()+feedback()+button('Nachricht zusammensetzen',S.packets.length!==5)+hintbox(['Die Reihenfolge der Karten ist zufällig. Ihre SEQ-Nummern sind der entscheidende Hinweis.','Beginne mit SEQ 01, dann 02 und so weiter. Das entstehende Wort beschreibt eine Verschiebung.'])}
+  return title(m,'Die Pakete ergeben SHIFT. Die zweite Nachricht wurde tatsächlich um einige Buchstaben verschoben.')+`<div class="mission-brief"><b>CIPHER CONSOLE</b><br>Verschlüsselter Text: <b>KRPH</b>. Beim Verschlüsseln wurden die Buchstaben im Alphabet um <b>+3 Stellen</b> verschoben. Schiebe sie zum Entschlüsseln zurück. Probiere die Reglerstellung aus.</div><h3 class="puzzletitle">02 / Caesar-Shift dekodieren</h3><div class="statrow"><span class="stat">ENCRYPTED: <b>KRPH</b></span><span class="stat">REVERSE SHIFT: <b id="shift-read">${S.shift}</b></span></div><label class="input-label" for="shift-range">Verschiebung rückwärts (0–25)</label><input type="range" id="shift-range" min="0" max="25" step="1" value="${S.shift}"><div class="sliderow"><span>0</span><span>25</span></div><div class="cipher" id="cipher-output" aria-live="polite">${caesar('KRPH',S.shift)}</div>`+feedback()+button('Entschlüsselung verifizieren')+hintbox(['Ein Caesar-Shift ersetzt jeden Buchstaben durch einen anderen mit festem Abstand im Alphabet.','Wenn die Nachricht mit +3 verschlüsselt wurde, musst du jeden Buchstaben um 3 Stellen zurücksetzen. K → H.'])}
+function missionFour(m){if(S.step===0){return title(m,'Alle Signale laufen hier zusammen. Die drei Freigabewörter öffnen die letzte Datenbank.')+`<div class="mission-brief"><b>FINAL SECURITY CHECK // SECURE CHANNEL</b><br>Gib die <b>vier Buchstaben</b> aus jeder bisherigen Mission ein. Die Reihenfolge entspricht den Kapiteln: Radar → Ausweichflughafen → Nachricht.</div><h3 class="puzzletitle">01 / Drei Freigabewörter</h3><div class="fields">${['MISSION 01','MISSION 02','MISSION 03'].map((n,i)=>`<label><span class="input-label">${n}</span><input class="codeinput" data-vault="${i}" maxlength="4" value="${e(S.vaultCodes[i])}" placeholder="••••" autocomplete="off" spellcheck="false"></label>`).join('')}</div>`+feedback()+button('Freigabewörter prüfen')+hintbox(['Jede vorherige Mission endete mit einem Wort in Großbuchstaben.','Mission 1 beginnt mit N, Mission 2 mit P und Mission 3 mit H.'])}
+  return title(m,'Die Freigaben stimmen. Eine letzte numerische Sperre schützt das Geschenk.')+`<div class="mission-brief"><b>FINAL CHECKSUM</b><br>Bilde einen fünfstelligen Code aus:<br>• <b>Pistennummer</b> aus Mission 1 (2 Ziffern)<br>• <b>Pistennummer</b> aus Mission 2 (2 Ziffern)<br>• <b>Caesar-Verschiebung</b> aus Mission 3 (1 Ziffer).<br>Gib die Zahlen ohne Leerzeichen ein.</div><h3 class="puzzletitle">02 / Unlock the flight plan</h3><label class="input-label" for="finalpin">FÜNFSTELLIGER CODE</label><input id="finalpin" class="codeinput" inputmode="numeric" pattern="[0-9]*" maxlength="5" value="${e(S.vaultPin)}" placeholder="•••••" autocomplete="off">`+feedback()+button('Final Approach freigeben')+hintbox(['Alle Ziffern sind in den drei bisherigen Missionen direkt genannt worden.','Verkette die Pisten 27 und 18 und die Verschiebung 3.'])}
+function complete(m){let info=m.n===1?'Der Radartrack NOVA72 ist identifiziert. Die Piste im Anflug war 27.':m.n===2?'Der Flughafen Pinefield ist geeignet. Die ausgewählte Piste war 18.':'Die Pakete ergaben SHIFT. Die entschlüsselte Nachricht war HOME; verwendet wurde Shift 3.';
+ return title(m,'Gut gemacht. Die Mission ist abgeschlossen und dein nächster Kanal ist freigeschaltet.')+`<div class="stamp">✓ CHANNEL CLEARED</div><div class="success">${info}</div><div class="copilot-note">${WOMBAT_ICON}<div><span class="smallcaps">WMBT-01 // MISSION ACKNOWLEDGED</span><p>${['Wunderbar. Das richtige Flugzeug und die richtige Piste. Ich habe selbstverständlich alles beaufsichtigt.','Landung geklärt. Die Flughafenkantine ist informiert.','SHIFT entschlüsselt. HOME bestätigt. Ab jetzt wird es persönlich.'][m.n-1]}</p></div></div><div class="code-strip"><div><div class="mono">DEIN FREIGABECODE</div><div class="code">${m.key}</div></div><button class="btn mutedbtn" type="button" data-action="copycode">Code kopieren</button></div><p class="subtle">Merk dir den Code. Für das Finale brauchst du alle drei Freigabewörter und die Zahlen aus den Missionen.</p>${calendarAvailable(Math.min(4,m.n+1))?'<div class="actions"><button class="btn" type="button" data-action="next">Nächste Mission öffnen →</button></div>':`<p class="subtle">Die nächste Übertragung öffnet sich automatisch, sobald der nächste Kanal freigegeben ist.</p>`}`}
+function finalReward(){return `<div class="eyebrow">MISSION COMPLETE // HOMEBOUND</div><h2 style="font-size:clamp(34px,5.5vw,55px);letter-spacing:-.045em;line-height:1.13;margin:10px 0 16px">Welcome home, ${e(PERSONAL.recipient)}.</h2><p class="subtle">Alle Codes richtig. Das Ziel war nie ein unbekannter Flughafen.</p><div class="wombat-finale">${WOMBAT_ICON}<div><b>WMBT-01 // FINAL TRANSMISSION</b><p>Mission erfüllt, Captain. Die letzten Koordinaten zeigen nach Hause. Ich beantrage hiermit offiziell einen Fensterplatz im Handgepäck. 🐾</p></div></div><div class="ticket"><div class="ticket-top"><strong class="mono" style="font-size:12px">HOMEBOUND AIRLINES</strong><span class="mono" style="font-size:11px">ONE WAY / ALWAYS HOME</span></div><div class="ticket-body"><div><div class="ticket-city">MOB</div><div class="ticket-citylabel">Mobile · Alabama</div></div><div class="ticket-arrow" aria-hidden="true">✈</div><div><div class="ticket-city">HAM</div><div class="ticket-citylabel">Hamburg · Zuhause</div></div></div><div class="ticket-foot"><span>PASSENGER · ${e(PERSONAL.recipient.toUpperCase())}</span><span>FLIGHT NO. · LOVE 24</span><span>SEAT · NEXT TO ${e(PERSONAL.sender.toUpperCase())} · CO-PILOT WMBT-01</span></div></div><div class="personal">${e(PERSONAL.finalMessage)}</div><div class="voucher"><div class="eyebrow">YOUR CHRISTMAS REWARD</div><h3>${e(PERSONAL.giftTitle)}</h3><p>${e(PERSONAL.giftDescription)}</p></div><div class="stamp">✓ ALL MISSIONS COMPLETE</div><p class="subtle">Das ist ein persönlicher Gutschein, kein echtes Flugticket.</p>`}
+function resetStep(){S.choice=null;S.hint=0;S.feedback=''}
+function finish(m){if(m.n===4){S.completedFinal=true}else if(!S.done.includes(m.n)){S.done.push(m.n);S.done.sort((a,b)=>a-b)}store();S.step=0;resetStep();render();document.querySelector('#mission-deck').scrollIntoView({behavior:'smooth',block:'start'})}
+function check(){const n=S.page;
+ if(n===1){if(S.step===0){if(S.choice==='1'){S.step=1;resetStep()}else{S.feedback='Noch nicht. Kontrolliere alle vier Bedingungen einschließlich der Quersumme.'}}
+ else if(S.choice==='2'){finish(MISSIONS[0]);return}else{S.feedback='Nicht ganz. Überlege, aus welcher Richtung der Wind kommt und welche Piste entgegenzeigt.'}}
+ else if(n===2){if(S.step===0){if(S.choice==='1'){S.step=1;resetStep()}else{S.feedback='Eine Bedingung wird verletzt. Prüfe Sicht, Pistenlänge und die verbleibende Reserve.'}}
+ else if(S.choice==='1'){finish(MISSIONS[1]);return}else{S.feedback='Diese Piste passt weniger gut zur Windrichtung 210°.'}}
+ else if(n===3){if(S.step===0){if(S.packets.map(x=>x.val).join('')==='SHIFT'){S.step=1;resetStep()}else{S.feedback='Die Paketfolge ist noch nicht richtig. Orientiere dich an den SEQ-Nummern.'}}
+ else if(S.shift===3){finish(MISSIONS[2]);return}else{S.feedback='Noch nicht entschlüsselt. Gesucht ist eine sinnvolle englische Nachricht mit vier Buchstaben.'}}
+ else if(n===4){if(S.step===0){if(S.vaultCodes.every((x,i)=>x.trim().toUpperCase()===MISSIONS[i].key)){S.step=1;resetStep()}else{S.feedback='Mindestens ein Freigabewort ist noch nicht richtig. Schau in die Abschlussanzeigen der Missionen 1–3.'}}
+ else if(S.vaultPin.trim()==='27183'){finish(MISSIONS[3]);return}else{S.feedback='Der fünfstellige Code stimmt noch nicht. Die Reihenfolge lautet: Piste 1, Piste 2, Shift 3.'}}
+ render()}
+function go(n){if(!(n>=1&&n<=4))return;S.page=n;S.step=0;S.codeEntry='';S.vaultCodes=['','',''];S.vaultPin='';S.packets=[];S.shift=0;resetStep();if(location.hash!==`#m${n}`){history.replaceState(null,'',`#m${n}`)}render();document.querySelector('#mission-deck').scrollIntoView({behavior:'smooth',block:'start'})}
+document.querySelector('#copilot-hero-portrait').innerHTML=WOMBAT_ICON;
+document.querySelector('#wombat-ping').addEventListener('click',()=>{
+  document.querySelector('#wombat-chirp').textContent=COPILOT_PINGS[copilotPingIndex%COPILOT_PINGS.length];
+  copilotPingIndex++;
+});
+document.addEventListener('click',ev=>{
+ const p=ev.target.closest('[data-mission]');if(p){go(Number(p.dataset.mission));return}
+ const ch=ev.target.closest('[data-choice]');if(ch){S.choice=ch.dataset.choice;S.feedback='';render();return}
+ const packet=ev.target.closest('[data-packet]');if(packet){let x=PACKETS.find(x=>x.seq===Number(packet.dataset.packet));if(x&&S.packets.length<5){S.packets.push(x);S.feedback='';render()}return}
+ const action=ev.target.closest('[data-action]');if(!action)return;
+ switch(action.dataset.action){
+ case 'hint':{const limits=S.page===4?2:2;S.hint=Math.min(limits,S.hint+1);render();break}
+ case 'check':check();break;
+ case 'removePacket':S.packets.pop();S.feedback='';render();break;
+ case 'next':go(Math.min(4,S.page+1));break;
+ case 'unlock':{let v=document.querySelector('#gatecode')?.value.trim().toUpperCase();if(v===MISSIONS[S.page-2].key){S.codeEntry=v;S.feedback='';render()}else{S.feedback='Freigabecode leider ungültig.';render()}break}
+ case 'copycode':{const val=MISSIONS[S.page-1].key;if(navigator.clipboard?.writeText){navigator.clipboard.writeText(val).then(()=>{action.textContent='Kopiert ✓'}).catch(()=>window.prompt('Code kopieren:',val))}else{window.prompt('Code kopieren:',val)}break}
+ }
+});
+document.addEventListener('input',ev=>{
+ if(ev.target.id==='shift-range'){S.shift=Number(ev.target.value);document.querySelector('#cipher-output').textContent=caesar('KRPH',S.shift);document.querySelector('#shift-read').textContent=S.shift}
+ if(ev.target.matches('[data-vault]')){S.vaultCodes[Number(ev.target.dataset.vault)]=ev.target.value.toUpperCase()}
+ if(ev.target.id==='finalpin'){S.vaultPin=ev.target.value.replace(/\D/g,'').slice(0,5);ev.target.value=S.vaultPin}
+});
+document.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.matches('#gatecode,#finalpin,[data-vault]')){ev.preventDefault();if(ev.target.id==='gatecode'){document.querySelector('[data-action="unlock"]')?.click()}else{document.querySelector('[data-action="check"]')?.click()}}});
+window.addEventListener('hashchange',()=>{const n=Number(location.hash.match(/^#m([1-4])$/)?.[1]);if(n&&n!==S.page)go(n)});
+const initial=Number(location.hash.match(/^#m([1-4])$/)?.[1]);if(initial)S.page=initial;
+render();
+</script>
+</body>
+</html>
